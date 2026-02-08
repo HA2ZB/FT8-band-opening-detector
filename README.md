@@ -1,8 +1,6 @@
-# WSPR UDP Watcher with GPIO LED (Orange Pi)
+# FT8 UDP Watcher with GPIO LED (Orange Pi)
 
-This is the "twin project" of **FT8-band-opening-detector** (https://github.com/HA2ZB/FT8-band-opening-detector).
-
-This project monitors **WSJT-X WSPR decodes via UDP**, classifies stations as **DX / non-DX** using a configurable prefix blacklist, and provides:
+This project monitors **WSJT-X FT8 decodes via UDP**, classifies stations as **DX / non-DX** using a configurable prefix blacklist, and provides:
 
 - **Visual indication via GPIO LED**
   - steady ON while DX activity is present
@@ -10,7 +8,7 @@ This project monitors **WSJT-X WSPR decodes via UDP**, classifies stations as **
 - **CSV logging** of DX-related decodes
 - **Headless / semi-headless operation**, suitable for Orange Pi / Raspberry Pi class systems
 
-The design assumes **receive-only WSPR monitoring** using an RTL-SDR + SpyVerter, with WSJT-X running over VNC.
+The design assumes **receive-only FT8 monitoring** using an RTL-SDR + SpyVerter, with WSJT-X running over VNC.
 
 The primary target was to continuously monitor the "magic" 6-meter band for Es openings.
 
@@ -31,7 +29,7 @@ rtl_sdr  →  sox (I/Q → audio)  →  PulseAudio null sink
                                      WSJT-X UDP messages
                                               │
                                               ▼
-                                      wsprwatch_udp.py
+                                      ft8watch_udp.py
                                               │
                            ┌──────────────────┴──────────────────┐
                            ▼                                     ▼
@@ -94,7 +92,7 @@ Inside the WSJT-X GUI (via VNC):
 - **Device**: `WSJTX_SINK`
 
 ### 2. Mode and band
-- Mode: **WSPR**
+- Mode: **FT8**
 - Band: must match the actually received band (e.g. 20 m = 14.074 MHz)
 
 ### 3. Reporting → UDP server
@@ -105,9 +103,9 @@ Inside the WSJT-X GUI (via VNC):
 
 WSJT-X continuously sends:
 - *Status packets* (including dial frequency)
-- *Decode packets* (WSPR messages)
+- *Decode packets* (FT8 messages)
 
-These packets are consumed by `wspr8watch_udp.py`.
+These packets are consumed by `ft8watch_udp.py`.
 
 ---
 
@@ -128,12 +126,12 @@ This creates a sink named `wsjtx_sink`, which WSJT-X uses as its audio input.
 
 ## Starting the radio / SDR audio chain
 
-Example for **6 m WSPR (50.293 MHz)** using a SpyVerter:
+Example for **20 m FT8 (14.074 MHz)** using a SpyVerter:
 
 ```bash
 sudo rtl_biast -b 1
 
-HF_KHZ=50293
+HF_KHZ=14074
 LO_KHZ=120000
 FS=1200000
 TUNE_HZ=$(( (HF_KHZ + LO_KHZ) * 1000 ))
@@ -152,14 +150,14 @@ Explanation:
 
 At this point:
 - WSJT-X should show a waterfall
-- WSPR decodes should appear in the WSJT-X window
+- FT8 decodes should appear in the WSJT-X window
 
 ---
 
-## Running the WSPR UDP watcher
+## Running the FT8 UDP watcher
 
 ```bash
-sudo python3 wsprwatch_udp.py /home/orangepi/WSPR/config.yaml
+sudo python3 ft8watch_udp.py /home/orangepi/FT8/config.yaml
 ```
 
 On startup the script prints:
@@ -168,7 +166,7 @@ On startup the script prints:
 - UDP bind address
 
 During operation:
-- WSPR decodes are printed to the console
+- FT8 decodes are printed to the console
 - DX lines are highlighted
 - LED state reflects DX / idle status
 
@@ -192,7 +190,7 @@ This allows quick visual indication of band openings without watching the screen
 DX-related decodes are appended to:
 
 ```
-/home/orangepi/WSPR/wspr_dx_log.csv
+/home/orangepi/FT8/dx_log.csv
 ```
 
 CSV format:
@@ -204,7 +202,7 @@ timestamp_utc,freq_hz,sender_callsign,grid,snr,raw_line
 The file can be safely monitored while the script is running:
 
 ```bash
-tail -f /home/orangepi/WSPR/wspr_dx_log.csv
+tail -f /home/orangepi/FT8/dx_log.csv
 ```
 
 Reading the file does **not** interfere with logging.
