@@ -1,0 +1,42 @@
+# config_wspr.yaml — WSPR UDP watcher config (separate from FT8)
+
+wspr:
+  # Your station Maidenhead locator (4 or 6 chars recommended)
+  home_grid: "JN97"
+
+  # Treat as "DX/interesting" only if distance >= this (km),
+  # when distance can be computed (i.e., valid grid present).
+  min_distance_km: 300
+
+  # If true: only trigger DX when a valid grid is present (recommended).
+  # If false: callsign-only decodes (no valid grid) can still be treated as DX
+  #           (distance_km will be empty in CSV).
+  require_grid: true
+
+  # Optional extra noise filter by callsign prefix
+  blacklist_prefixes: [HA, HG, OM, OE, 9A, S5, OK]
+
+alert:
+  # If no DX for this long, LED goes to heartbeat mode (minutes)
+  dx_hold_minutes: 20
+
+  # Heartbeat behavior while no DX
+  heartbeat_every_seconds: 5
+  heartbeat_on_seconds: 0.2
+
+  # CSV log file
+  csv_path: "/home/orangepi/WSPR/wspr_dx_log.csv"
+
+gpio:
+  # /dev/gpiochipN
+  chip: 1
+
+  # Port like PI6 (bank letter + pin number)
+  port: "PI6"
+
+  # true: LED on = 1, false: LED on = 0
+  active_high: true
+
+wsjtx_udp:
+  bind_ip: "0.0.0.0"
+  port: 2237
