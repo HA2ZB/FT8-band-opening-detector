@@ -1,5 +1,7 @@
 # FT8 UDP Watcher with GPIO LED (Orange Pi)
 
+This is the "twin project" of **WSPR-band-opening-detector** (https://github.com/HA2ZB/WSPR-band-opening-detector).
+
 This project monitors **WSJT-X FT8 decodes via UDP**, classifies stations as **DX / non-DX** using a configurable prefix blacklist, and provides:
 
 - **Visual indication via GPIO LED**
